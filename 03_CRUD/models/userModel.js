@@ -13,5 +13,5 @@ const userSchema = new mongoose.Schema({
         unique: true
     }
 })
-
+ 
 module.exports = mongoose.model("User", userSchema)
