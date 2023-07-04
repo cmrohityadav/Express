@@ -5,7 +5,7 @@ exports.home = (req, res) => {
 }
 
 exports.createUser = async(req, res) => {
-    // extract info
+     // extract info
     try {
        const {name, email}  = req.body
 
