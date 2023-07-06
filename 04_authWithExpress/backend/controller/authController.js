@@ -52,19 +52,65 @@ const signup= async(req,res,nexxt)=>{
         }
         return res.status(400).json({
             sucess:false,
-            message:e.message
+            message:error.message
          })
      
    }
 }
 
-//
-const signin=()=>{
+//signin
+const signin=async(req,res)=>{
+    const { email, password}=req.body
+    
+    if(!email || !password){
+        return res.status(400).json({
+            sucess:false,
+            message:"every field is mandatory"
+         })
+    }
+
+   try {
+    const user=await userModel
+    .findOne({
+        email
+    })
+    .select('+password');
+
+    if(!user || user.password ===password){
+        return res.status(400).json({
+            sucess:false,
+            message:"Invalid credentails"
+         })
+    }
+
+
+    //token
+    const token=user.jwtToken();
+    user.password=undefined;
+    const cookiesOption={
+        maxAge:24*60*60*1000,
+        httpOnly:true
+    };
+
+    res.cookie("token",token,cookiesOption);
+    res.status(200).json({
+        success:true,
+        data: user
+    })
+
+    
+   } catch (error) {
+
+     res.status(400).json({
+        success:false,
+        data:error.message
+   })
+}
 
 
 }
 
 
 module.exports={
-    signup
+    signup,signin
 }

@@ -1,4 +1,5 @@
 const mongoose=require('mongoose')
+const JWT=require('jsonwebtoken')
 
 const { Schema}=mongoose;
 const userSchema=new Schema({
@@ -26,11 +27,28 @@ const userSchema=new Schema({
  },
  forgotPasswordExpiryDate:{
     type:String
- },
-//  timestamps: true
+ }
+
+//  {
+//    timestamps:true
+// },
+// //  timestamps: true
 
 
-})
+});
+
+
+
+//token
+userSchema.methods={
+   jwtToken(){
+      return JWT.sign(
+         {id:this._id,email:this.email},
+         process.env.SECRET,
+         {expiresIn:'24h'}
+      )
+   }
+};
 
 const userModel=mongoose.model('user',userSchema); //user ki entry db me jayegi,konsa schmea use kr rh hu
 module.exports=userModel;
