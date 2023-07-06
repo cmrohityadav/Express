@@ -1,7 +1,10 @@
 const express=require('express');
 const app=express();
 
-const authRouter=require('./router/authRouter.js')
+const authRouter=require('./router/authRouter.js');
+const databaseconnect = require('./config/database.js');
+databaseconnect();
+
 
 app.use(express.json())
 app.use('/api/auth/',authRouter);
