@@ -3,8 +3,9 @@ const app=express();
 
 const authRouter=require('./router/authRouter.js');
 const databaseconnect = require('./config/database.js');
+const cookieParser=require('cookie-parser');
 databaseconnect();
-
+app.use(cookieParser());
 
 app.use(express.json())
 app.use('/api/auth/',authRouter);

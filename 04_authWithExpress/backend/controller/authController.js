@@ -1,6 +1,6 @@
 const userModel = require("../model/userSchema");
 const emailValidator=require('email-validator')
-
+const bcrypt=require('bcrypt')
 const signup= async(req,res,nexxt)=>{
     const {name,email,password,confirmPassword}=req.body;
     console.log(name,email,password,confirmPassword);
@@ -76,7 +76,14 @@ const signin=async(req,res)=>{
     })
     .select('+password');
 
-    if(!user || user.password ===password){
+    // if(!user || user.password ===password){
+    //     return res.status(400).json({
+    //         sucess:false,
+    //         message:"Invalid credentails"
+    //      })
+    // }
+
+    if(!user || bcrypt.compare(password, user.password)){
         return res.status(400).json({
             sucess:false,
             message:"Invalid credentails"
@@ -110,7 +117,52 @@ const signin=async(req,res)=>{
 
 }
 
+const getUser=async(req,res,next)=>{
+    const userId=req.user.id;
+    try {
+
+        const user=await userModel.findById(userId)
+        return res.status(200).json({
+            success:true,
+            data:user
+        })
+  
+    } catch (error) {
+        return res.status(400).json({
+            success:false,
+            message:error.message
+        })
+        
+    }
+
+
+}
+
+
+//logout
+const logout=(req,res)=>{
+
+    try {
+        const cookiesOption={
+            expire:new Date(),
+            httpOnly:true
+        }
+        res.cookie("token",null,cookiesOption);
+        res.status(200).json({
+            success:true,
+            message:"LogOUT"
+        })
+    } catch (error) {
+        res.status(400).json({
+            success:false,
+            message:e.message
+
+        })
+        
+    }
+}
+
 
 module.exports={
-    signup,signin
+    signup,signin,getUser,logout
 }

@@ -1,5 +1,6 @@
 const mongoose=require('mongoose')
 const JWT=require('jsonwebtoken')
+const bcrypt=require('bcrypt')
 
 const { Schema}=mongoose;
 const userSchema=new Schema({
@@ -36,6 +37,17 @@ const userSchema=new Schema({
 
 
 });
+
+
+
+userSchema.pre('save',async function(){
+   if(!this.isModified('password')){
+      return next()
+      
+   }
+   this.password=await bcrypt.hash(this.password,10);
+   return nezt();
+})
 
 
 
